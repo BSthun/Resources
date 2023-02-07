@@ -1,0 +1,31 @@
+FROM ubuntu:focal
+
+LABEL maintainer="Bhumjate S. <bsthun@gmail.com>"
+
+# Add entrypoint script
+ADD entrypoint.sh /usr/local/bin
+
+RUN apt update \
+	&& apt install -y wget curl htop nano screen socat gnupg ca-certificates lsb-release openssh-server sudo --no-install-recommends \
+	#
+	# Configure SSH
+	&& sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
+	&& sed -ie 's/#Port 22/Port 22/g' /etc/ssh/sshd_config \
+	&& mkdir -p /run/sshd \
+	#
+	# Install Docker
+	&& curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker.gpg \
+	&& echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list \
+	&& apt update \
+	&& apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin \
+	#
+	# Configure Docker CLI
+	&& mkdir /root/.docker \
+	&& echo '{ "psFormat": "table {{.ID}} \\t {{.Names}} \\t {{.Status}} \\t {{.Image}} \\t {{.Command}} \\t {{.Size}}" }' > /root//.docker/config.json \
+	#
+	# Set entrypoint permission
+	&& chmod +x /usr/local/bin/entrypoint.sh
+
+EXPOSE 22
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

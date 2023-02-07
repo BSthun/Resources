@@ -1,4 +1,4 @@
-FROM alpine:edge
+FROM debian:stable-slim
 
 LABEL maintainer="Bhumjate S. <bsthun@gmail.com>"
 
@@ -6,8 +6,10 @@ LABEL maintainer="Bhumjate S. <bsthun@gmail.com>"
 ADD entrypoint.sh /usr/local/bin
 
 # Install OpenSSH
-RUN apk add --update openssh \
-	&& rm -rf /tmp/* /var/cache/apk/* \
+RUN apt update \
+	&& apt install -y openssh-server \
+	&& apt-get clean \
+	&& rm -rf /tmp/* /etc/ssh/ssh_host_key \
 	&& sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
 	&& sed -ie 's/#Port 22/Port 22/g' /etc/ssh/sshd_config \
 	&& mkdir -p /run/sshd \
@@ -15,4 +17,3 @@ RUN apk add --update openssh \
 
 EXPOSE 22
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["/usr/sbin/sshd","-D"]
