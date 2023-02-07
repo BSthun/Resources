@@ -5,13 +5,26 @@ LABEL maintainer="Bhumjate S. <bsthun@gmail.com>"
 # Add entrypoint script
 ADD entrypoint.sh /usr/local/bin
 
+# Timezone
+ENV TZ=Asia/Bangkok
+
+# Install packages
 RUN apt update \
-	&& apt install -y wget curl htop nano screen socat gnupg ca-certificates lsb-release openssh-server sudo --no-install-recommends \
+	&& apt install -y wget curl htop nano screen socat gnupg ca-certificates lsb-release openssh-server sudo locales --no-install-recommends \
 	#
 	# Configure SSH
 	&& sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
 	&& sed -ie 's/#Port 22/Port 22/g' /etc/ssh/sshd_config \
 	&& mkdir -p /run/sshd \
+	#
+	# Configure locales
+	&& echo "LC_ALL=en_US.UTF-8" | tee -a /etc/environment > /dev/null \
+	&& echo "en_US.UTF-8 UTF-8" | tee -a /etc/locale.gen > /dev/null \
+	&& echo "LANG=en_US.UTF-8" | tee /etc/locale.conf > /dev/null \
+	&& locale-gen en_US.UTF-8 \
+	#
+	# Configure timezone
+	&& ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
 	#
 	# Install Docker
 	&& curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker.gpg \
