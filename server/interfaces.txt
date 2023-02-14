@@ -1,0 +1,15 @@
+# Configure /etc/network/interfaces
+auto eth0
+iface eth0 inet static
+address 172.20.10.2
+netmask 255.255.255.0
+gateway 172.20.10.1
+pre-up ip link add eth0 type dummy
+
+# Add virtual IP addressess to eth0
+/bin/bash -c "for ip in {3..12}; do ip addr add 172.20.10.\${ip}/24 dev eth0; done"
+
+# iptables rules
+iptables -A FORWARD -i enp3s0 -o eth0 -p tcp --syn --dport 6100:6999 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A FORWARD -i enp3s0 -o eth0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -i eth0 -o enp3s0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
