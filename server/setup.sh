@@ -41,9 +41,9 @@ EOF
 
 # Install essential packages
 echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
-echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
+echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
 sudo apt-get update
-sudo apt-get install -y htop nload iotop curl wget iptables-persistent ca-certificates gnupg lsb-release apt-transport-https
+sudo apt-get install -y htop nload iotop nano curl wget iptables-persistent ca-certificates gnupg lsb-release apt-transport-https
 
 # Install Docker
 sudo mkdir -m 0755 -p /etc/apt/keyrings
@@ -60,6 +60,9 @@ sudo dpkg -i /tmp/gotop.deb
 sysctl -w net.ipv4.ip_forward=1
 sysctp -p
 
+# Add secondary docker script
+mkdir -p /var/sec
+wget -O /var/sec/secdocker.sh https://raw.githubusercontent.com/BSthun/Scripts/main/server/secdocker.sh
 # Cleanup
 sudo rm -r /tmp/*
 

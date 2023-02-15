@@ -4,7 +4,7 @@
 WantedBy=multi-user.target
 
 [Service]
-ExecStart=bash /var/sec/secdocker.sh <NAME>
+ExecStart=bash /var/sec/secdocker.sh <NAME> <NO>
 WorkingDirectory=/var/sec
 Restart=always
 RestartSec=5
