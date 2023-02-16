@@ -5,8 +5,8 @@ sed -i "s/debian/$(hostname)/g" /etc/hosts
 
 # Customize bashrc
 echo "export PS1='\[\033[36m\]\h \[\033[1;32m\][ \w ]▶ \[\033[00m\]'"  >> ~/.bashrc
-echo "bind '"\\e[A": history-search-backward'" >> ~/.bashrc
-echo "bind '"\\e[B": history-search-forward'" >> ~/.bashrc
+echo "bind '\"\\e[A\": history-search-backward'" >> ~/.bashrc
+echo "bind '\"\\e[B\": history-search-forward'" >> ~/.bashrc
 
 # Add aliases and functions
 tee -a ~/.bashrc <<EOF
@@ -14,9 +14,17 @@ alias l="ls -al"
 alias gt="gotop -c monokai"
 alias ct="systemd-cgtop -m"
 function de() {
-	docker exec -it $1 /bin/bash
+	docker exec -it \$1 /bin/bash
 }
 function dh() {
+	if [ -z "\$DOCKER_HOST" ]; then
+		echo "unix:///var/run/docker.sock"
+		return
+	fi
+
+	echo "\$DOCKER_HOST"
+}
+function chdh() {
 	if [ -z "\$1" ]; then
 		export DOCKER_HOST=unix:///var/run/docker.sock
 		return
@@ -28,14 +36,6 @@ function dh() {
 	fi
 
 	export DOCKER_HOST=unix:///var/sec/engine.\$1.sock
-}
-function cdh() {
-	if [ -z "\$DOCKER_HOST" ]; then
-		echo "unix:///var/run/docker.sock"
-		return
-	fi
-
-	echo "\$DOCKER_HOST"
 }
 EOF
 
@@ -60,9 +60,20 @@ sudo dpkg -i /tmp/gotop.deb
 sysctl -w net.ipv4.ip_forward=1
 sysctp -p
 
+# Configure interfaces
+echo >> /etc/network/interfaces
+curl -fsSL https://raw.githubusercontent.com/BSthun/Scripts/main/server/interfaces.txt >> /etc/network/interfaces
+systemctl restart networking
+
+# Configure iptables
+iptables -A FORWARD -i enp3s0 -o eth0 -p tcp --syn --dport 6100:6999 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A FORWARD -i enp3s0 -o eth0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -i eth0 -o enp3s0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
 # Add secondary docker script
 mkdir -p /var/sec
 wget -O /var/sec/secdocker.sh https://raw.githubusercontent.com/BSthun/Scripts/main/server/secdocker.sh
+
 # Cleanup
 sudo rm -r /tmp/*
 
