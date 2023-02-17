@@ -13,7 +13,10 @@ tee -a ~/.bashrc <<EOF
 alias l="ls -al"
 alias gt="gotop -c monokai"
 alias ct="systemd-cgtop -m"
-function de() {
+alias sc="systemctl"
+alias scs="systemctl status"
+alias de="docker exec -it"
+function dee() {
 	docker exec -it \$1 /bin/bash
 }
 function dh() {
@@ -55,6 +58,14 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 # Install Gotop
 wget -O /tmp/gotop.deb https://github.com/cjbassi/gotop/releases/download/3.0.0/gotop_3.0.0_linux_amd64.deb
 sudo dpkg -i /tmp/gotop.deb
+
+# Install completion aliases
+wget -O ~/.complete_alias https://raw.githubusercontent.com/cykerway/complete-alias/master/complete_alias
+echo "source ~/.complete_alias" >> ~/.bashrc
+echo "complete -F _complete_alias sc" >> ~/.complete_alias
+echo "complete -F _complete_alias scs" >> ~/.complete_alias
+echo "complete -F _complete_alias de" >> ~/.complete_alias
+echo ". ~/.complete_alias" >> ~/.bash_completion
 
 # Enable IPv4 forwarding
 sysctl -w net.ipv4.ip_forward=1

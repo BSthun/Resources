@@ -50,4 +50,4 @@ else
 fi
 
 # Start docker daemon
-dockerd --bridge=docker0 --data-root=$DBASE.data --exec-root=$DBASE.exec --host=unix://$DBASE.sock --pidfile=$DBASE.pid --ip 172.20.10.2
+dockerd --bridge=docker0 --data-root=$DBASE.data --exec-root=$DBASE.exec --host=unix://$DBASE.sock --pidfile=$DBASE.pid --ip 172.20.9.1
