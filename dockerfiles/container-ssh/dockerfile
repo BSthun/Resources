@@ -7,11 +7,18 @@ ADD entrypoint.sh /usr/local/bin
 
 # Install OpenSSH
 RUN apt update \
-	&& apt install -y openssh-server \
+	&& apt install -y openssh-server locales \
 	&& apt-get clean \
+	&& echo "export LC_ALL=en_US.UTF-8" > /root/.bashrc \
+	&& echo "export LANG=en_US.UTF-8" >> /root/.bashrc \
+	&& echo "LC_ALL=en_US.UTF-8" | tee -a /etc/environment > /dev/null \
+	&& echo "en_US.UTF-8 UTF-8" | tee -a /etc/locale.gen > /dev/null \
+	&& echo "LANG=en_US.UTF-8" | tee /etc/locale.conf > /dev/null \
+	&& locale-gen en_US.UTF-8 \
 	&& rm -rf /tmp/* /etc/ssh/ssh_host_key \
-	&& sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
-	&& sed -ie 's/#Port 22/Port 22/g' /etc/ssh/sshd_config \
+	&& sed -ie 's/#PermitRootLogin .*/PermitRootLogin yes/g' /etc/ssh/sshd_config \
+	&& sed -ie 's/#GatewayPorts .*/GatewayPorts yes/g' /etc/ssh/sshd_config \
+	&& sed -ie 's/#Port .*/Port 22/g' /etc/ssh/sshd_config \
 	&& mkdir -p /run/sshd \
 	&& chmod +x /usr/local/bin/entrypoint.sh
 

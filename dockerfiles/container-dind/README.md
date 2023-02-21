@@ -1,4 +1,4 @@
-# Container VM
+# Container DIND
 
 A virtual machine like Ubuntu container. It included SSH enabled and Docker pre-installed for running as Docker-in-Docker using [sysbox-runc](https://github.com/nestybox/sysbox/). The setup virtualize a small VM that able to run Docker inside. Useful for testing/sandboxing containers, sharing VM with friends, or organizing workshop which required individual VM setup.
 

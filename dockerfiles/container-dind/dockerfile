@@ -1,0 +1,18 @@
+FROM ubuntu:focal
+
+LABEL maintainer="Bhumjate S. <bsthun@gmail.com>"
+
+# Add entrypoint script
+ADD entrypoint.sh /usr/local/bin
+
+# Timezone
+ENV TZ=Asia/Bangkok
+
+# Install packages
+RUN apt update \
+	&& apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin \
+	&& docker network create --driver=bridge --subnet=10.5.0.0/16 br0
+
+EXPOSE 22
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

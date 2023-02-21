@@ -10,23 +10,26 @@ if [ ! -f "/etc/ssh/ssh_host_key" ]; then
 	echo "root:$PASSWORD" | chpasswd
 	
 	# Run first startup script
-	if [ ! -z $FIRST_SCRIPT ] && [ ! -f $FIRST_SCRIPT ]; then
-		chmod +x $FIRST_SCRIPT
-		$FIRST_SCRIPT
+	if [ ! -z $SETUP_SCRIPT  ] && [ ! -f $SETUP_SCRIPT  ]; then
+		chmod +x $SETUP_SCRIPT 
+		$SETUP_SCRIPT 
 	fi
 
 	# Set script permission
-	if [ ! -z $SCRIPT ] && [ ! -f $SCRIPT ]; then
-		chmod +x $SCRIPT
+	if [ ! -z $STARTUP_SCRIPT ] && [ ! -f $STARTUP_SCRIPT ]; then
+		chmod +x $STARTUP_SCRIPT
 	fi
 fi
 
 # Start SSH daemon
 /usr/sbin/sshd
 
+# Start docker daemon
+service docker start
+
 # Run generic startup script
-if [ ! -z $SCRIPT ]; then
-	$SCRIPT
+if [ ! -z $STARTUP_SCRIPT ]; then
+	$STARTUP_SCRIPT
 fi
 
 # Keep container alive
