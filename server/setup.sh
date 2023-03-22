@@ -73,7 +73,7 @@ sysctp -p
 
 # Configure interfaces
 echo >> /etc/network/interfaces
-curl -fsSL https://raw.githubusercontent.com/BSthun/Scripts/main/server/interfaces.txt >> /etc/network/interfaces
+curl -fsSL https://raw.githubusercontent.com/BSthun/Resources/main/server/interfaces.txt >> /etc/network/interfaces
 systemctl restart networking
 
 # Configure iptables
@@ -83,7 +83,7 @@ iptables -A FORWARD -i eth0 -o enp3s0 -m conntrack --ctstate ESTABLISHED,RELATED
 
 # Add secondary docker script
 mkdir -p /var/sec
-wget -O /var/sec/secdocker.sh https://raw.githubusercontent.com/BSthun/Scripts/main/server/secdocker.sh
+wget -O /var/sec/secdocker.sh https://raw.githubusercontent.com/BSthun/Resources/main/server/secdocker.sh
 
 # Cleanup
 sudo rm -r /tmp/*

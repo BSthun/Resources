@@ -1,2 +1,3 @@
-# Scripts
-Various of shell scripts, configuration files, dockerfiles. Mixed in one place.
+# Resources
+
+Personal resources including shell scripts, configuration files, dockerfiles and mini projects used in specific event or used persoanally.
