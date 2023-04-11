@@ -1,3 +1,6 @@
+# Scripts to create and start secondary docker engines
+# Created by Bhumjate S. (BSthun)
+
 #!/bin/bash
 
 # Check <name>, <no> is provided

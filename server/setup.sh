@@ -1,3 +1,6 @@
+# Scripts to setup server with customizations based on my preferences
+# Created by Bhumjate S. (BSthun)
+
 #!/bin/bash
 
 # Setup hostname
